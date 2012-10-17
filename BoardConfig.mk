@@ -41,7 +41,7 @@ TARGET_ARCH_VARIANT_FPU := vfpv3-d16
 TARGET_CPU_SMP := true
 TARGET_HAVE_TEGRA_ERRATA_657451 := true
 
-BOARD_CUSTOM_GRAPHICS := ../../../device/motorola/olympus/recovery/graphics.c
+#BOARD_CUSTOM_GRAPHICS := ../../../device/motorola/olympus/recovery/graphics.c
 BOARD_CUSTOM_RECOVERY_KEYMAPPING:= ../../device/motorola/olympus/recovery/recovery_ui.c
 BOARD_HAS_SDCARD_INTERNAL := true
 
@@ -83,7 +83,7 @@ BOARD_VOLD_MAX_PARTITIONS := 18
 BOARD_VOLD_EMMC_SHARES_DEV_MAJOR := true
 
 BOARD_SDEXT_DEVICE := /dev/block/mmcblk1p2
-BOARD_UMS_LUNFILE := /sys/devices/platform/usb_mass_storage/lun0/file
+BOARD_UMS_LUNFILE := /sys/devices/platform/usb_mass_storage/lun%d/file
 BOARD_HIJACK_BOOT_PATH := /preinstall/
 BOARD_HIJACK_EXECUTABLES := logwrapper
 BOARD_HIJACK_LOG_ENABLE := false
@@ -99,10 +99,8 @@ BOARD_USES_HW_MEDIARECORDER := true
 BOARD_USES_HW_MEDIASCANNER := false
 BOARD_USES_HW_MEDIAPLUGINS := true
 
-TARGET_OVERLAY_ALWAYS_DETERMINES_FORMAT := true
 TARGET_USES_GL_VENDOR_EXTENSIONS := true
-TARGET_ELECTRONBEAM_FRAMES := 15
-BOARD_USE_SCREENCAP := true
+TARGET_ELECTRONBEAM_FRAMES := 20
 
 # WiFi
 BOARD_WPA_SUPPLICANT_DRIVER := WEXT
@@ -128,12 +126,30 @@ TARGET_SPECIFIC_HEADER_PATH := device/motorola/olympus/include
 #EGL
 BOARD_EGL_CFG := device/motorola/olympus/config/egl.cfg
 
-#HDMI
-BOARD_USES_LGE_HDMI_ROTATION := true
-
 #USB Tethering
 BOARD_CUSTOM_USB_CONTROLLER := ../../device/motorola/olympus/UsbController.cpp
 BOARD_HAS_LARGE_FILESYSTEM := true
 
-# Dock Audio
-BOARD_USE_MOTO_DOCK_HACK := true
+TARGET_RECOVERY_INITRC := device/motorola/olympus/init.recovery.rc
+DEVICE_RESOLUTION := 540x960
+RECOVERY_GRAPHICS_USE_LINELENGTH := true
+#SP1_NAME := "pds"
+#SP1_BACKUP_METHOD := files
+#SP1_MOUNTABLE := 1
+SP1_NAME := "osh"
+SP1_DISPLAY_NAME := "Webtop"
+SP1_BACKUP_METHOD := files
+SP1_MOUNTABLE := 1
+#SP3_NAME := "preinstall"
+#SP3_BACKUP_METHOD := image
+#SP3_MOUNTABLE := 0
+#RECOVERY_SDCARD_ON_DATA := true
+#BOARD_HAS_NO_REAL_SDCARD := true
+#TW_INCLUDE_DUMLOCK := true
+TW_INTERNAL_STORAGE_PATH := "/emmc"
+TW_INTERNAL_STORAGE_MOUNT_POINT := "emmc"
+TW_EXTERNAL_STORAGE_PATH := "/sdcard"
+TW_EXTERNAL_STORAGE_MOUNT_POINT := "sdcard"
+TW_NO_BATT_PERCENT := true
+TW_CUSTOM_POWER_BUTTON := 107
+TW_NO_REBOOT_BOOTLOADER := true

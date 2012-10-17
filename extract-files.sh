@@ -43,8 +43,6 @@ adb pull /system/etc/am2server.pubkey ../../../vendor/$VENDOR/$DEVICE/proprietar
 adb pull /system/lib/libAuthUDMDrv_1750A100.so ../../../vendor/$VENDOR/$DEVICE/proprietary/lib
 adb pull /system/lib/libam2app.so ../../../vendor/$VENDOR/$DEVICE/proprietary/lib
 adb pull /system/lib/libam2server.so ../../../vendor/$VENDOR/$DEVICE/proprietary/lib
-adb pull /system/app/FingerprintSensor.apk ../../../vendor/$VENDOR/$DEVICE/proprietary/app
-adb pull /system/etc/tsm.xml ../../../vendor/$VENDOR/$DEVICE/proprietary/etc
 
 # system libs
 adb pull /system/lib/libmirror.so ../../../vendor/$VENDOR/$DEVICE/proprietary/lib
@@ -239,20 +237,10 @@ adb pull /system/lib/libstagefrighthw.so ../../../vendor/$VENDOR/$DEVICE/proprie
 BASEURL="http://atrix-dev-team.github.com/android_vendor_motorola_olympus/"
 wget "${BASEURL}touchpad.cfg" -O ../../../vendor/$VENDOR/$DEVICE/proprietary/etc/touchpad/22/touchpad.cfg
 wget "${BASEURL}FastDormancy.apk" -O ../../../vendor/$VENDOR/$DEVICE/proprietary/app/FastDormancy.apk
-wget "${BASEURL}AudioEffectSettings.apk" -O ../../../vendor/$VENDOR/$DEVICE/proprietary/app/AudioEffectSettings.apk
 wget "${BASEURL}battd" -O ../../../vendor/$VENDOR/$DEVICE/proprietary/bin/battd
 wget "${BASEURL}libbattd.so" -O ../../../vendor/$VENDOR/$DEVICE/proprietary/lib/libbattd.so
 wget "${BASEURL}libnmea.so" -O ../../../vendor/$VENDOR/$DEVICE/proprietary/lib/libnmea.so
 wget "${BASEURL}gps.olympus.so" -O ../../../vendor/$VENDOR/$DEVICE/proprietary/lib/hw/gps.olympus.so
 wget "${BASEURL}libmoto_ril.so" -O ../../../vendor/$VENDOR/$DEVICE/proprietary/lib/libmoto_ril.so
-wget "${BASEURL}libnvdispmgr_d.so" -O ../../../vendor/$VENDOR/$DEVICE/proprietary/lib/libnvdispmgr_d.so
-wget "${BASEURL}am2app.jar" -O ../../../vendor/$VENDOR/$DEVICE/proprietary/app/am2app.jar
-wget "${BASEURL}GfxEngine.apk" -O ../../../vendor/$VENDOR/$DEVICE/proprietary/app/GfxEngine.apk
-wget "${BASEURL}FingerprintSensor.apk" -O ../../../vendor/$VENDOR/$DEVICE/proprietary/app/FingerprintSensor.apk
-wget "${BASEURL}am2server" -O ../../../vendor/$VENDOR/$DEVICE/proprietary/bin/am2server
-wget "${BASEURL}libAuthUDMDrv_1750A100.so" -O ../../../vendor/$VENDOR/$DEVICE/proprietary/lib/libAuthUDMDrv_1750A100.so
-wget "${BASEURL}libam2app.so" -O ../../../vendor/$VENDOR/$DEVICE/proprietary/lib/libam2app.so
-wget "${BASEURL}libam2server.so" -O ../../../vendor/$VENDOR/$DEVICE/proprietary/lib/libam2server.so
-wget "${BASEURL}tsm.xml" -O ../../../vendor/$VENDOR/$DEVICE/proprietary/etc/tsm.xml
 
 ./setup-makefiles.sh

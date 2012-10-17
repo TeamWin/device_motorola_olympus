@@ -5,15 +5,6 @@ on init
     # battery driver permissions
     mkdir /pds 0755 root root
     mkdir /osh 0000 root root
-    # create mountpoints for host mode storage
-    mkdir /mnt/usbdisk_1.0 0000 system system
-    mkdir /mnt/usbdisk_1.1 0000 system system
-    mkdir /mnt/usbdisk_1.2 0000 system system
-    mkdir /mnt/usbdisk_1.3 0000 system system
-    mkdir /mnt/usbdisk_1.4 0000 system system
-    mkdir /mnt/usbdisk_1.5 0000 system system
-    mkdir /mnt/usbdisk_1.6 0000 system system
-    mkdir /mnt/usbdisk_1.7 0000 system system
 
 on fs
 # mount mtd partitions
@@ -26,7 +17,16 @@ on fs
     exec /system/bin/logwrapper /system/bin/pds_perm_fix.sh
 
 on post-fs
+    symlink /system/lib /vendor/lib
     # once everything is setup, no need to modify /
+    mkdir /mnt/usbdisk_1.0 0000 system system
+    mkdir /mnt/usbdisk_1.1 0000 system system
+    mkdir /mnt/usbdisk_1.2 0000 system system
+    mkdir /mnt/usbdisk_1.3 0000 system system
+    mkdir /mnt/usbdisk_1.4 0000 system system
+    mkdir /mnt/usbdisk_1.5 0000 system system
+    mkdir /mnt/usbdisk_1.6 0000 system system
+    mkdir /mnt/usbdisk_1.7 0000 system system
     mount rootfs rootfs / ro remount
 
     # We chown/chmod /data again so because mount is run as root + defaults
@@ -157,12 +157,7 @@ on boot
     chown root system /sys/devices/platform/reg-virt-sw5/enabled
 
     # sdcard tweaks
-    write /sys/block/mmcblk1/bdi/read_ahead_kb 1024
-
-    # enable kms
-    write /sys/kernel/mm/ksm/sleep_millisecs 1400
-    write /sys/kernel/mm/ksm/pages_to_scan 200
-    write /sys/kernel/mm/ksm/run 1
+    write /sys/block/mmcblk1/bdi/read_ahead_kb 4096
 
     # create the necessary dirs for tpapi with proper permission
     mkdir /data/tpapi
@@ -295,18 +290,9 @@ on boot
 # Start services
     exec /system/bin/mot_boot_mode
 
-# triggered by holding down volume down, volume up and power
-service reboot_key /system/bin/reboot
-    user system
-    oneshot
-    keycodes 114 115 107
-    disabled
-
 service tcmd /system/bin/tcmd
     class post-zygote_services
-    # group option accepts at most 12 suppl. groups
-    group system radio input system camera graphics sdcard_rw audio inet bluetooth wifi net_admin
-    #group log compass cache mount net_bt_admin net_raw
+    group system radio input system log camera graphics sdcard_rw audio inet bluetooth wifi compass cache system mount net_bt_admin net_raw net_admin
     socket local_tcmd stream 0660 system system
     socket batch_socket stream 0600 system system
 
@@ -387,6 +373,17 @@ service nvrm_daemon /system/bin/logwrapper /system/bin/nvrm_daemon
     user root
     onrestart restart servicemanager
 
+service bt_start /system/bin/bt_init_wrapper.sh
+    user bluetooth
+    group bluetooth net_bt_admin net_raw net_admin misc
+    oneshot
+
+service bt_stop /system/bin/bt_init -stop
+    user bluetooth
+    group bluetooth net_bt_admin misc
+    disabled
+    oneshot
+
 service wpa_supplicant /system/bin/wpa_supplicant -D wext -i eth0 -c /data/misc/wifi/wpa_supplicant.conf
     class WLAN
     socket wpa_eth0 dgram 0660 wifi wifi
@@ -466,14 +463,11 @@ service map /system/bin/sdptool add --channel=20 MAP
     disabled
     oneshot
 
-service hciattach /system/bin/bt_init_wrapper.sh
+service hciattach /system/bin/hciattach_wrapper.sh
     user bluetooth
     group bluetooth net_bt_admin
-    disabled
     oneshot
-
-on property:init.svc.hciattach=stopping
-    exec /system/bin/bt_init -stop
+    disabled
 
 # This is product specific init script which will be appended to init.rc
 # after init.nv_common.rc. 
@@ -490,10 +484,13 @@ on early-boot
         setprop ro.EMPTY_APP_MEM 21000
 
 on boot
-	chown system system /dev/aes1750
+	chown system /dev/aes1750
+	chgrp system /dev/aes1750
 	chmod 0600 /dev/aes1750
-	chown system system /data/am2data.db
-	chown system system /data/am2data.db.meta
+	chown system /data/am2data.db
+	chown system /data/am2data.db.meta
+	chgrp system /data/am2data.db
+	chgrp system /data/am2data.db.meta
 
 # Enable ADB
 #   write /dev/usb_device_mode charge_adb
@@ -526,10 +523,17 @@ on boot
       setprop net.tcp.buffersize.gprs    4096,8192,12288,4096,8192,12288
 
 
+# ppp daemon used by DUN.
+service pppd /system/xbin/pppd silent ipparam dun plugin /system/lib/libpppd_plugin.so
+    class post-zygote_services
+    user root
+    disabled
+    oneshot
+
 # Fingerprint sensor daemon
 service am2server /system/bin/am2server
-    user system
-    group system inet input
+	user system
+	group system inet input
     class pre-zygote_services
 
 on device-added-/dev/ttyUSB0

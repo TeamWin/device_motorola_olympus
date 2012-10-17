@@ -1,0 +1,60 @@
+on early-init
+    start ueventd
+
+on init
+    export PATH /sbin
+    export LD_LIBRARY_PATH .:/sbin
+    export ANDROID_ROOT /system
+    export ANDROID_DATA /data
+    export EXTERNAL_STORAGE /sdcard
+
+    symlink /system/etc /etc
+    
+    write /dev/usb_device_mode msc_adb
+
+    mkdir /boot
+    mkdir /sdcard
+    mkdir /sd-ext
+    mkdir /datadata
+    mkdir /emmc
+    mkdir /internal
+    mkdir /system
+    mkdir /data
+    mkdir /cache
+    mount /tmp /tmp tmpfs
+
+on boot
+    ifup lo
+    hostname localhost
+    domainname localdomain
+
+    chmod 660 /sys/class/misc/touchpad
+
+    class_start default
+
+
+service touch /sbin/touchpad -a
+    oneshot
+
+service ueventd /sbin/ueventd
+    critical
+
+service recovery /sbin/recovery
+
+service adbd /sbin/adbd recovery
+    disabled
+    onrestart start usbd
+
+service usbd /sbin/usbd
+    disabled
+
+on property:persist.service.adb.enable=1
+    stop usbd
+    write /dev/usb_device_mode msc_adb
+    start usbd
+    start adbd
+
+on property:persist.service.adb.enable=0
+    stop adbd
+    stop usbd
+

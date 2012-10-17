@@ -33,13 +33,17 @@ $(call inherit-product-if-exists, vendor/motorola/olympus/olympus-vendor.mk)
 # motorola helper scripts
 PRODUCT_COPY_FILES += \
     device/motorola/olympus/scripts/pds_perm_fix.sh:system/bin/pds_perm_fix.sh \
-    device/motorola/olympus/scripts/bt_init_wrapper.sh:system/bin/bt_init_wrapper.sh
+    device/motorola/olympus/scripts/bt_init_wrapper.sh:system/bin/bt_init_wrapper.sh \
+    device/motorola/olympus/scripts/hciattach_wrapper.sh:system/bin/hciattach_wrapper.sh
 
 # sysctl conf
 PRODUCT_COPY_FILES += \
     device/motorola/olympus/config/sysctl.conf:system/etc/sysctl.conf
 
 ## (3)  Finally, the least specific parts, i.e. the non-GSM-specific aspects
+
+# we have enough storage space to hold precise GC data
+PRODUCT_TAGS += dalvik.gc.type-precise
 
 # Set en_US as default locale
 PRODUCT_LOCALES := en_US
@@ -67,18 +71,14 @@ $(call inherit-product-if-exists, vendor/motorola/olympus/olympus-vendor.mk)
 $(call inherit-product, build/target/product/full_base.mk)
 
 PRODUCT_PACKAGES += Usb \
-			DockAudio \
-			OlympusParts \
-			Torch \
-			hcitool \
-			hciconfig \
-			screencap
+			Torch
 
 DEVICE_PACKAGE_OVERLAYS += device/motorola/olympus/overlay
 
 # Board-specific init
 PRODUCT_COPY_FILES += \
     device/motorola/olympus/config/vold.fstab:system/etc/vold.fstab \
+    device/motorola/olympus/init.vsnet:system/bin/init.vsnet \
     device/motorola/olympus/scripts/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
     device/motorola/olympus/config/media_profiles.xml:system/etc/media_profiles.xml \
     device/motorola/olympus/config/wpa_supplicant.conf:system/etc/wifi/wpa_supplicant.conf
